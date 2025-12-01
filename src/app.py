@@ -120,9 +120,9 @@ def get_activity(activity_name: str):
     return activities[activity_name]
 
 
-@app.post("/activities/{activity_name}/signup")
-def signup_for_activity(activity_name: str, email: str):
-    """Sign up a student for an activity"""
+@app.delete("/activities/{activity_name}/participants")
+def unregister_participant(activity_name: str, email: str):
+    """Unregister a student from an activity."""
     # Validate activity exists
     if activity_name not in activities:
         raise HTTPException(status_code=404, detail="Activity not found")
@@ -130,15 +130,11 @@ def signup_for_activity(activity_name: str, email: str):
     # Get the specific activity
     activity = activities[activity_name]
 
-    # Validate student is not already signed up (case-insensitive)
     normalized_email = email.strip().lower()
-    if any(p.lower() == normalized_email for p in activity["participants"]):
-        raise HTTPException(status_code=400, detail="Student is already signed up")
+    # Check if the student is actually registered
+    if not any(p.lower() == normalized_email for p in activity["participants"]):
+        raise HTTPException(status_code=404, detail="Participant not found in this activity")
 
-    # Validate capacity
-    if len(activity["participants"]) >= activity["max_participants"]:
-        raise HTTPException(status_code=400, detail="Activity is full")
-
-    # Add student
-    activity["participants"].append(email)
-    return {"message": f"Signed up {email} for {activity_name}"}
+    # Remove participant (case-insensitive match)
+    activity["participants"] = [p for p in activity["participants"] if p.lower() != normalized_email]
+    return {"message": f"Unregistered {email} from {activity_name}"}
