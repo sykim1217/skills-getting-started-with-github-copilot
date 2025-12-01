@@ -13,6 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
       // Clear loading message
       activitiesList.innerHTML = "";
 
+      // Reset activity select (keep placeholder option)
+      activitySelect.innerHTML = '<option value="">-- Select an activity --</option>';
+
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
         const activityCard = document.createElement("div");
@@ -20,16 +23,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const spotsLeft = details.max_participants - details.participants.length;
 
-        activityCard.innerHTML = `
+        // Header + basic details
+        const headerHTML = `
           <h4>${name}</h4>
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
-          <p><strong>Participants:</strong></p>
-          <ul>
-            ${details.participants.map(participant => `<li>${participant}</li>`).join('')}
-          </ul>
         `;
+
+        activityCard.innerHTML = headerHTML;
+
+        // Participants section
+        const participantsLabel = document.createElement("p");
+        participantsLabel.innerHTML = "<strong>Participants:</strong>";
+        activityCard.appendChild(participantsLabel);
+
+        if (Array.isArray(details.participants) && details.participants.length > 0) {
+          const ul = document.createElement("ul");
+          ul.className = "participants-list";
+
+          details.participants.forEach((participant) => {
+            const li = document.createElement("li");
+            li.className = "participant";
+
+            // Determine display name safely
+            let displayName = typeof participant === "string" ? participant : participant.name || String(participant);
+
+            // If it's an email, show name before @
+            if (displayName.includes("@")) {
+              displayName = displayName.split("@")[0];
+            }
+
+            const avatar = document.createElement("span");
+            avatar.className = "avatar";
+            avatar.textContent = displayName.trim().charAt(0).toUpperCase() || "?";
+
+            const nameSpan = document.createElement("span");
+            nameSpan.className = "participant-name";
+            nameSpan.textContent = displayName;
+
+            li.appendChild(avatar);
+            li.appendChild(nameSpan);
+            ul.appendChild(li);
+          });
+
+          activityCard.appendChild(ul);
+        } else {
+          const emptyP = document.createElement("p");
+          emptyP.className = "no-participants";
+          emptyP.textContent = "No participants yet — be the first to sign up!";
+          activityCard.appendChild(emptyP);
+        }
 
         activitiesList.appendChild(activityCard);
 

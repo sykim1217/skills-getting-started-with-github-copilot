@@ -75,10 +75,70 @@ section h3 {
 }
 
 .activity-card ul {
-  list-style-type: disc;
-  padding-left: 20px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* 참가자 목록을 카드 하단에서 래핑하여 표시 */
+.participants-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-top: 10px;
-  color: #555;
+}
+
+/* 각 참가자 항목은 아바타와 이름으로 구성 */
+.participant {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  color: #333;
+  font-size: 14px;
+}
+
+/* 아바타 원형 스타일 — 약간의 색상과 텍스트 대비 */
+.participant .avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg,#3949ab,#1a237e);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  font-size: 13px;
+}
+
+/* 참가자 이름 길면 줄임 */
+.participant .participant-name {
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 빈 참가자 목록 텍스트 */
+.no-participants {
+  margin-top: 10px;
+  font-style: italic;
+  color: #777;
+  padding-left: 6px;
+}
+
+/* 작은 화면에서 참가자 배지가 정돈되도록 */
+@media (max-width: 480px) {
+  .participant .participant-name {
+    max-width: 80px;
+    font-size: 13px;
+  }
 }
 
 .form-group {
